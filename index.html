@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Webcomic</title>
+  <style>
+    /* =============================================
+       EASY CUSTOMIZATION - change these to your liking
+       ============================================= */
+    :root {
+      --bg-color: #1a1a1a;
+      --panel-color: #111111;
+      --border-color: #333333;
+      --text-color: #cccccc;
+      --muted-color: #888888;
+      --btn-bg: #2a2a2a;
+      --btn-hover: #3a3a3a;
+      --accent: #e0a96d;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg-color);
+      color: var(--text-color);
+      font-family: system-ui, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      letter-spacing: 0.02em;
+    }
+
+    /* The image viewer */
+    #comic-frame {
+      background: var(--panel-color);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      overflow: hidden;
+      max-width: 800px;
+      width: 100%;
+    }
+
+    #comic-frame img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    /* Navigation */
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .nav button {
+      background: var(--btn-bg);
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 0.5rem 1.25rem;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .nav button:hover:not(:disabled) { background: var(--btn-hover); }
+    .nav button:disabled { opacity: 0.3; cursor: default; }
+
+    #page-counter {
+      color: var(--muted-color);
+      font-size: 0.9rem;
+      min-width: 80px;
+      text-align: center;
+    }
+
+    /* Keyboard hint */
+    .hint {
+      color: var(--muted-color);
+      font-size: 0.8rem;
+      margin-top: 0.75rem;
+      text-align: center;
+    }
+
+    /* First/last page jump buttons */
+    .nav-secondary {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+      justify-content: center;
+    }
+
+    .nav-secondary button {
+      background: transparent;
+      color: var(--muted-color);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 0.3rem 0.9rem;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: color 0.15s;
+    }
+
+    .nav-secondary button:hover:not(:disabled) { color: var(--accent); }
+    .nav-secondary button:disabled { opacity: 0.3; cursor: default; }
+
+    footer {
+      margin-top: 3rem;
+      color: var(--muted-color);
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- =============================================
+       YOUR COMIC TITLE - change this
+       ============================================= -->
+  <h1> non official book</h1>
+
+  <!-- =============================================
+       ADD YOUR PAGES HERE
+       Just add the filenames of your PNGs in order.
+       They must be in the same folder as this file.
+
+       Example:
+         const PAGES = [
+           "page01.png",
+           "page02.png",
+           "page03.png",
+           "page04.png",
+         ];
+       ============================================= -->
+  <script>
+    const PAGES = [
+      "title.png",
+      "furthur notice.png",
+      "pg 2.png",
+      "pg 3.png",
+    ];
+  </script>
+  <!-- ============================================= -->
+
+  <div id="comic-frame">
+    <img id="comic-img" src="" alt="Comic page" />
+  </div>
+
+  <div class="nav">
+    <button id="btn-prev">← Prev</button>
+    <span id="page-counter"></span>
+    <button id="btn-next">Next →</button>
+  </div>
+
+  <div class="nav-secondary">
+    <button id="btn-first">« First</button>
+    <button id="btn-last">Last »</button>
+  </div>
+
+  <p class="hint">Keyboard: ← → arrow keys to navigate</p>
+
+  <footer>made with ♥</footer>
+
+  <script>
+    let current = 0;
+
+    const img       = document.getElementById('comic-img');
+    const counter   = document.getElementById('page-counter');
+    const btnPrev   = document.getElementById('btn-prev');
+    const btnNext   = document.getElementById('btn-next');
+    const btnFirst  = document.getElementById('btn-first');
+    const btnLast   = document.getElementById('btn-last');
+
+    function goTo(index) {
+      current = Math.max(0, Math.min(PAGES.length - 1, index));
+      img.src = PAGES[current];
+      img.alt = "Page " + (current + 1);
+      counter.textContent = (current + 1) + " / " + PAGES.length;
+      btnPrev.disabled  = current === 0;
+      btnFirst.disabled = current === 0;
+      btnNext.disabled  = current === PAGES.length - 1;
+      btnLast.disabled  = current === PAGES.length - 1;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    btnPrev.onclick  = () => goTo(current - 1);
+    btnNext.onclick  = () => goTo(current + 1);
+    btnFirst.onclick = () => goTo(0);
+    btnLast.onclick  = () => goTo(PAGES.length - 1);
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowLeft')  goTo(current - 1);
+      if (e.key === 'ArrowRight') goTo(current + 1);
+    });
+
+    goTo(0);
+  </script>
+
+</body>
+</html>
